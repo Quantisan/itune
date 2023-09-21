@@ -1,5 +1,31 @@
 Wizard is a Python package for optimizing procedures using reinforcement learning with human feedback (RLHF).
 
+## Example: Favourite number
+
+Find everyone's favorite number from 1 to 100 (inclusive).
+
+```Python
+import rlhf
+
+# experiment with a list of integers from 1 to 100
+@rlhf.experiment(params=list(range(1, 101)))
+def favourite_number(experiment) -> int:
+    return experiment["favourite_number"]
+
+
+print(f"Everyone's favourite number from 1 to 100 (inclusive) is {favourite_number}")
+
+
+user_input = input("Agree (y) / Disagree (n)?")
+if user_input == "y":
+    ######################
+    # RLHF reward function
+    rlhf.reward(1)
+    ######################
+```
+
+TODO: show output and step through some iterations
+
 ## Example: Retrieval Augmented Generation (RAG) application
 
 Let's dive into an example from LlamaIndex's Getting Started guide. In this scenario, we have a procedure with several parameters to fine-tune. For simplicity, we'll focus on just two of them: `chunk_size` and `llm`. We can harness the power of RLHF to discover the most effective combination of these parameters.
@@ -29,8 +55,8 @@ service_context = ServiceContext.from_defaults(
     #######################################################################
     # pass in acceptable list of values to these parameters and use RLHF to
     # optimize over combinations of them
-    chunk_size=500,
-    llm=OpenAI()
+    chunk_size=chunk_size,
+    llm=llm
     #######################################################################
 )
 index = VectorStoreIndex.from_documents(documents, service_context=service_context)
@@ -46,6 +72,8 @@ if user_input == "y":
     rlhf.reward(1)
     ######################
 ```
+
+TODO: show output and step through some iterations
 
 This example demonstrates how Wizard can be used to optimize procedure parameters by using user feedback to improve outcomes.
 
