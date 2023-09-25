@@ -14,3 +14,13 @@ def test_experiment():
         return model.get_variation()
 
     assert three(model) == 3
+
+
+def test_experiment_without_output_type_hint():
+    model = rlhf.Model()
+
+    @model.experiment(variations=[3])
+    def three(model):
+        return model.get_variation()
+
+    assert three(model) == 3

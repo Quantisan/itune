@@ -7,10 +7,10 @@ class Model:
     def experiment(self, variations):
         def decorator(func):
             assert isinstance(variations, list)
-            assert all(
-                isinstance(x, func.__annotations__["return"]) for x in variations
-            )
-   
+            func_return_type = func.__annotations__.get("return")
+            if func_return_type:
+                assert all(isinstance(x, func_return_type) for x in variations)
+
             self._model[func.__name__] = variations
 
             def wrapper(*args, **kwargs):
