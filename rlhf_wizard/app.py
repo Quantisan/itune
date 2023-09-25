@@ -1,15 +1,20 @@
+from typing import List
+
+
 class Model:
-
-    def __init__(self):
-        self._model = None
-
+    _model: dict[str, List] = {}
 
     def experiment(self, variations):
         def decorator(func):
-            return func(*args, **kwargs)
+            self._model[func.__name__] = variations
+
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+
+            return wrapper
+
         return decorator
 
-
     def get_variation(self):
-        return self._model
-
+        ## TODO: get the calling function name
+        return self._model.get("three")[0]
