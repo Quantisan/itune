@@ -2,23 +2,20 @@ import random
 from typing import List
 
 
-def _validate_variations(variations, func):
-    if not isinstance(variations, list):
-        raise TypeError("variations must be a list")
-    func_return_type = func.__annotations__.get("return")
-    if func_return_type:
-        if not all(isinstance(x, func_return_type) for x in variations):
-            raise TypeError(
-                "all variations must have the same type as the function return type"
-            )
+def _validate_variations(kwargs):
+    if (
+        len(kwargs) != 1
+        or not isinstance(kwargs.get(list(kwargs.keys())[0]), list)
+        or not kwargs.get(list(kwargs.keys())[0])
+    ):
+        raise ValueError("Argument must have exactly one non-empty list value")
 
 
 class Model:
     _model: dict[str, List] = {}
 
     def parameter(self, **kwargs):
-        assert len(kwargs) == 1
-        assert list(kwargs.values())
-        assert isinstance(list(kwargs.values())[0], list)
+        _validate_variations(kwargs)
+
         self._model.update(kwargs)
         return random.choice(list(kwargs.values())[0])
