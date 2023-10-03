@@ -22,20 +22,3 @@ class Model:
         assert isinstance(list(kwargs.values())[0], list)
         self._model.update(kwargs)
         return random.choice(list(kwargs.values())[0])
-
-    def experiment(self, variations):
-        def decorator(func):
-            _validate_variations(variations, func)
-
-            self._model[func.__name__] = variations
-
-            def wrapper(*args, **kwargs):
-                return func(*args, **kwargs)
-
-            return wrapper
-
-        return decorator
-
-    def get_variation(self):
-        ## TODO: get the calling function name
-        return self._model.get("three")[0]
