@@ -1,3 +1,4 @@
+import random
 from typing import List
 
 
@@ -14,6 +15,13 @@ def _validate_variations(variations, func):
 
 class Model:
     _model: dict[str, List] = {}
+
+    def parameter(self, **kwargs):
+        assert len(kwargs) == 1
+        assert list(kwargs.values())
+        assert isinstance(list(kwargs.values())[0], list)
+        self._model.update(kwargs)
+        return random.choice(list(kwargs.values())[0])
 
     def experiment(self, variations):
         def decorator(func):
