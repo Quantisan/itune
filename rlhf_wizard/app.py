@@ -15,10 +15,13 @@ class Model:
     _model: dict[str, list] = {}
     _current_selections: dict[str, Any] = {}
 
+    def _track_choice(self, key, choice):
+        self._current_selections[key] = choice
+
     def parameter(self, **kwargs):
         _validate_variations(kwargs)
 
         k, value_list = list(kwargs.items())[0]
         choice = random.choice(value_list)
-        self._current_selections[k] = choice
+        self._track_choice(k, choice)
         return choice
