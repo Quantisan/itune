@@ -15,6 +15,10 @@ def test_instantiate_model():
 def test_model_parameter():
     result = rlhf.model.parameter(x=[1, 2, 3])
     assert result in [1, 2, 3]
+    assert rlhf.model._current_selections == {"x": result}
+
+    with pytest.raises(Exception):
+        rlhf.model.parameter(x=[1, 2, 3])
 
 
 def test_model_parameter_multiple_variations():
