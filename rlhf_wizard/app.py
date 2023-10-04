@@ -1,5 +1,5 @@
 import random
-from typing import List
+from typing import Any
 
 
 def _validate_variations(kwargs):
@@ -12,10 +12,13 @@ def _validate_variations(kwargs):
 
 
 class Model:
-    _model: dict[str, List] = {}
+    _model: dict[str, list] = {}
+    _current_selections: dict[str, Any] = {}
 
     def parameter(self, **kwargs):
         _validate_variations(kwargs)
 
-        self._model.update(kwargs)
-        return random.choice(list(kwargs.values())[0])
+        k, value_list = list(kwargs.items())[0]
+        choice = random.choice(value_list)
+        self._current_selections[k] = choice
+        return choice
