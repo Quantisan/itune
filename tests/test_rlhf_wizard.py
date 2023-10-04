@@ -11,11 +11,24 @@ def test_instantiate_model():
     assert isinstance(rlhf.model, rlhf.Model)
 
 
+## parameter()
+
+
 def test_model_parameter():
     result = rlhf.model.parameter(x=[1, 2, 3])
     assert result in [1, 2, 3]
-    assert rlhf.model._current_selections == {"x": result}
 
+    # check that the current selection is tracked
+    assert rlhf.model._current_selections == {"x": result}
+    # check that model is intialized with all the possible values
+    assert rlhf.model._model == {
+        "x": {
+            "successes": {"1": 0, "2": 0, "3": 0},
+            "failures": {"1": 0, "2": 0, "3": 0},
+        }
+    }
+
+    # check that we cannot call the same parameter again
     with pytest.raises(Exception):
         rlhf.model.parameter(x=[1, 2, 3])
 
