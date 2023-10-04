@@ -12,32 +12,21 @@ def test_instantiate_model():
     assert isinstance(rlhf.model, rlhf.Model)
 
 
-def test_experiment():
-    @rlhf.model.experiment(variations=[3])
-    def three(model) -> int:
-        return model.get_variation()
-
-    assert three(rlhf.model) == 3
+def test_model_parameter():
+    result = rlhf.model.parameter(x=[1, 2, 3])
+    assert result in [1, 2, 3]
 
 
-def test_experiment_without_output_type_hint():
-    @rlhf.model.experiment(variations=[3])
-    def three(model):
-        return model.get_variation()
-
-    assert three(rlhf.model) == 3
+def test_model_parameter_multiple_variations():
+    with pytest.raises(ValueError):
+        rlhf.model.parameter(variation=[1, 2, 3], variation2=[4, 5, 6])
 
 
-def test_experiment_variation_validation_fail():
-    with pytest.raises(TypeError) as e:
+def test_model_parameter_empty_variation():
+    with pytest.raises(ValueError):
+        rlhf.model.parameter(variation=[])
 
-        @rlhf.model.experiment(variations=[3])
-        def three(model) -> str:
-            return model.get_variation()
 
-        three(rlhf.model)
-
-    assert (
-        str(e.value)
-        == "all variations must have the same type as the function return type"
-    )
+def test_model_parameter_non_list_variation():
+    with pytest.raises(ValueError):
+        rlhf.model.parameter(variation=1)
