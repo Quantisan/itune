@@ -17,8 +17,8 @@ class Model:
     def _track_choice(self, key, choice):
         if key not in self._current_selections:
             self._current_selections[key] = choice
-        elif self._current_selections[key]:
-            raise Exception("Parameter has already been selected")
+        else:
+            raise Exception(f"Parameter `{key}` has already been selected")
 
     def parameter(self, **kwargs):
         self._validate_parameter_variations(kwargs)
