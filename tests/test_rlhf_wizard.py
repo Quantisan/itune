@@ -46,3 +46,6 @@ def test_model_parameter_empty_variation():
 def test_model_parameter_non_list_variation():
     with pytest.raises(ValueError):
         rlhf.model.parameter(variation=1)
+
+
+# TODO: test _choose_parameter() failures

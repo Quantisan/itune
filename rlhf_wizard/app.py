@@ -26,6 +26,18 @@ class Model:
             "failures": {str(value): 0 for value in value_list},
         }
 
+    def _choose_parameter(self, k, value_list):
+        if k not in self._model:
+            raise Exception(f"Parameter `{k}` is not in the model")
+
+        if set(self._model[k]["successes"].keys()) != set([str(v) for v in value_list]):
+            raise Exception(
+                f"Parameter `{k}` possible values list appear to have changed since the model was initialized"
+            )
+
+        # TODO: implement RL
+        return random.choice(value_list)
+
     def parameter(self, **kwargs):
         self._validate_parameter_variations(kwargs)
 
@@ -34,8 +46,7 @@ class Model:
         if k not in self._model:
             self._seed_model(k, value_list)
 
-        # TODO: refactor out _choose_parameter()
-        choice = random.choice(value_list)
+        choice = self._choose_parameter(k, value_list)
         self._track_choice(k, choice)
         return choice
 
