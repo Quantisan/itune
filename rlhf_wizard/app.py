@@ -15,7 +15,10 @@ class Model:
             raise ValueError("Argument must have exactly one non-empty list value")
 
     def _track_choice(self, key, choice):
-        self._current_selections[key] = choice
+        if key not in self._current_selections:
+            self._current_selections[key] = choice
+        elif self._current_selections[key]:
+            raise Exception("Parameter has already been selected")
 
     def parameter(self, **kwargs):
         self._validate_parameter_variations(kwargs)
