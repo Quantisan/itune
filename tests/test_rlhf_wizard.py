@@ -3,7 +3,8 @@ import pytest
 import rlhf_wizard as rlhf
 
 
-def setup_function():
+@pytest.fixture(autouse=True)
+def new_model():
     rlhf.model = rlhf.Model()
 
 
