@@ -3,8 +3,9 @@ from typing import Any
 
 
 class Model:
-    _model: dict[str, dict] = {}
-    _current_selections: dict[str, Any] = {}
+    def __init__(self):
+        self._model: dict[str, dict] = {}
+        self._current_selections: dict[str, Any] = {}
 
     def _validate_parameter_variations(self, kwargs):
         if (
