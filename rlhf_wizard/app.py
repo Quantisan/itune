@@ -30,9 +30,14 @@ class Model:
         if k not in self._model:
             raise Exception(f"Parameter `{k}` is not in the model")
 
-        if set(self._model[k]["successes"].keys()) != set([str(v) for v in value_list]):
+        # note that keys are saved as strings
+        original_value_list = list(self._model[k]["successes"].keys())
+        new_value_list = [str(v) for v in value_list]
+        if set(original_value_list) != set(new_value_list):
             raise Exception(
-                f"Parameter `{k}` possible values list appear to have changed since the model was initialized"
+                f"Parameter `{k}` possible values list appear to have changed since the "
+                # note that printing out the whole list can overrun the log if they get long
+                f"model was initialized. Original [{', '.join(original_value_list)}], current values [{', '.join(new_value_list)}]."
             )
 
         # TODO: implement RL
