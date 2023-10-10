@@ -58,5 +58,5 @@ model.register_outcome(user_input == "y")
 
 TODO: show output and step through some iterations
 
-This example demonstrates how Wizard can be used to optimize procedure parameters by using user feedback to improve outcomes.
+This example demonstrates how `itune` can be used to optimize procedure parameters by using user feedback to improve outcomes.
 
