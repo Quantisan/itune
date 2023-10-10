@@ -61,7 +61,7 @@ class TestParameter:
 
 class TestOutcome:
     def test_model_register_outcome(self):
-        with patch.object(itune.MultiArmedBandit, "choose", return_value="2"):
+        with patch.object(itune.MultiArmedBandit, "choose", return_value=2):
             assert self.model.parameter(x=[1, 2]) == 2
         self.model.register_outcome(False)
         assert self.model._model == {
@@ -69,7 +69,7 @@ class TestOutcome:
         }
         assert self.model._current_selections == {}
 
-        with patch.object(itune.MultiArmedBandit, "choose", return_value="1"):
+        with patch.object(itune.MultiArmedBandit, "choose", return_value=1):
             assert self.model.parameter(x=[1, 2]) == 1
         self.model.register_outcome(True)
         assert self.model._model == {

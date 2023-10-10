@@ -44,9 +44,10 @@ class Model:
                 f"model was initialized. Original [{', '.join(original_value_list)}], current values [{', '.join(new_value_list)}]."
             )
 
-        mab = MultiArmedBandit()
-        choice = mab.choose(self._model[k])
-        return mab.ensure_chosen_type(choice, value_list)
+        mab = MultiArmedBandit(
+            successes=self._model[k]["successes"], failures=self._model[k]["failures"]
+        )
+        return mab.choose(value_list)
 
     def parameter(self, **kwargs):
         self._validate_parameter_variations(kwargs)

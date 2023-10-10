@@ -2,22 +2,31 @@ import random
 
 
 class MultiArmedBandit:
-    def __init__(self):
-        self.epsilon = 0.05
+    def __init__(self, successes, failures, epsilon=0.05):
+        self.successes = successes
+        self.failures = failures
+        self.epsilon = epsilon
 
-    def ensure_chosen_type(self, choice_str, value_list):
+    def _ensure_chosen_type(self, choice_str, value_list):
         return value_list[value_list.index(eval(choice_str))]
 
-    def choose(self, current_states):
-        successes = current_states["successes"]
-        failures = current_states["failures"]
-        values = [
-            successes[arm] / (successes[arm] + failures[arm])
-            if successes[arm] + failures[arm] > 0
-            else 0
-            for arm in successes.keys()
-        ]
-        if random.random() > self.epsilon:
-            return list(successes.keys())[values.index(max(values))]
+    def _expected_reward(self, arm):
+        if (self.successes[arm] + self.failures[arm]) > 0:
+            return self.successes[arm] / (self.successes[arm] + self.failures[arm])
         else:
-            return random.choice(list(successes.keys()))
+            return 0
+
+    def choose(self, value_list):
+        values = [self._expected_reward(arm) for arm in self.successes.keys()]
+        # epsilon-greedy
+        if random.random() > self.epsilon:
+            return self._ensure_chosen_type(
+                list(self.successes.keys())[values.index(max(values))], value_list
+            )
+        else:
+            return (
+                self._ensure_chosen_type(
+                    random.choice(list(self.successes.keys())),
+                    value_list,
+                ),
+            )
