@@ -10,13 +10,14 @@ class MultiArmedBandit:
     def _ensure_chosen_type(self, choice_str, value_list):
         return value_list[value_list.index(eval(choice_str))]
 
+    def _expected_reward(self, arm):
+        if (self.successes[arm] + self.failures[arm]) > 0:
+            return self.successes[arm] / (self.successes[arm] + self.failures[arm])
+        else:
+            return 0
+
     def choose(self, value_list):
-        values = [
-            self.successes[arm] / (self.successes[arm] + self.failures[arm])
-            if self.successes[arm] + self.failures[arm] > 0
-            else 0
-            for arm in self.successes.keys()
-        ]
+        values = [self._expected_reward(arm) for arm in self.successes.keys()]
         if random.random() > self.epsilon:
             return self._ensure_chosen_type(
                 list(self.successes.keys())[values.index(max(values))], value_list
