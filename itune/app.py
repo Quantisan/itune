@@ -60,6 +60,17 @@ class Model:
         self._current_selections = {}
 
     def register_outcome(self, is_success: bool):
-        # TODO: update model
+        for (
+            self._current_selections_key,
+            self._current_selections_value,
+        ) in self._current_selections.items():
+            if is_success:
+                self._model[self._current_selections_key]["successes"][
+                    str(self._current_selections_value)
+                ] += 1
+            else:
+                self._model[self._current_selections_key]["failures"][
+                    str(self._current_selections_value)
+                ] += 1
 
         self._reset_current_selections()
