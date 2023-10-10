@@ -1,6 +1,8 @@
 import random
 from typing import Any
 
+from .choose import MultiArmedBandit
+
 
 class Model:
     def __init__(self):
@@ -41,8 +43,9 @@ class Model:
                 f"model was initialized. Original [{', '.join(original_value_list)}], current values [{', '.join(new_value_list)}]."
             )
 
-        # TODO: implement RL
-        return random.choice(value_list)
+        mab = MultiArmedBandit()
+        choice = mab.choose(self._model[k])
+        return mab.ensure_chosen_type(choice, value_list)
 
     def parameter(self, **kwargs):
         self._validate_parameter_variations(kwargs)
