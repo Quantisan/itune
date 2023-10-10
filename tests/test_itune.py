@@ -1,16 +1,16 @@
 import pytest
 
-import rlhf_wizard as rlhf
+import itune as itune
 
 
 @pytest.fixture(autouse=True)
 def with_model(request):
-    request.cls.model = rlhf.Model()
+    request.cls.model = itune.Model()
 
 
 class TestApp:
     def test_instantiate_model(self):
-        assert isinstance(rlhf.Model(), rlhf.Model)
+        assert isinstance(itune.Model(), itune.Model)
 
 
 class TestParameter:
