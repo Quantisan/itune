@@ -6,6 +6,7 @@ from .choose import MultiArmedBandit
 
 class Model:
     def __init__(self):
+        # TODO: model, and maybe current_selections too, should be kept in MultiArmedBandit
         self._model: dict[str, dict] = {}
         self._current_selections: dict[str, Any] = {}
 
