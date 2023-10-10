@@ -45,8 +45,7 @@ class Model:
             )
 
         mab = MultiArmedBandit()
-        choice = mab.choose(self._model[k])
-        return mab.ensure_chosen_type(choice, value_list)
+        return mab.choose(value_list, self._model[k])
 
     def parameter(self, **kwargs):
         self._validate_parameter_variations(kwargs)
