@@ -1,20 +1,22 @@
-Wizard is a Python package for optimizing procedures using reinforcement learning with human feedback (RLHF).
+# i tune your parameters so you don't have to
+
+itune is a Python package for optimizing parameters using reinforcement learning with human feedback (RLHF).
 
 ## Example: Favourite number
 
 Find everyone's favorite number from 1 to 100 (inclusive).
 
 ```Python
-import rlhf_wizard as rlhf
+import itune
 
-rlhf_model = rlhf.Model()
-print(f"Everyone's favourite number from 1 to 100 (inclusive) is {rlhf_model.parameter(fav_num=range(1,101))}")
+itune_model = itune.Model()
+print(f"Everyone's favourite number from 1 to 100 (inclusive) is {itune_model.parameter(fav_num=range(1,101))}")
 
 
 user_input = input("Agree (y) / Disagree (n)?")
 ######################
-# RLHF reward function
-rlhf_model.register_outcome(user_input == "y")
+# reward function
+itune_model.register_outcome(user_input == "y")
 ######################
 ```
 
@@ -28,11 +30,11 @@ Let's dive into an example from LlamaIndex's Getting Started guide. In this scen
 from llama_index import ServiceContext, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.llms import OpenAI, PaLM
 
-import rlhf_wizard as rlhf
+import itune
 
 documents = SimpleDirectoryReader("data").load_data()
 
-model = rlhf.Model()
+model = itune.Model()
 
 
 service_context = ServiceContext.from_defaults(
@@ -50,7 +52,7 @@ response = query_engine.query("What did the author do growing up?")
 print(response)
 
 user_input = input("Good response?")
-# RLHF reward function
+# reward function
 model.register_outcome(user_input == "y")
 ```
 
