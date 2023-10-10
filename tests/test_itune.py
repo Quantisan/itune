@@ -53,6 +53,11 @@ class TestParameter:
         with pytest.raises(Exception):
             self.model.parameter(x=[1, 2])
 
+    def test_model_parameter_unexpected_parameter_given(self):
+        self.model.parameter(x=[1, 2, 3])
+        with pytest.raises(NotImplementedError):
+            self.model.parameter(y=[4, 5, 6])
+
 
 class TestOutcome:
     def test_model_register_outcome(self):

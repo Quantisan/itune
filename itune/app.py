@@ -52,8 +52,15 @@ class Model:
 
         k, value_list = list(kwargs.items())[0]
 
-        if k not in self._model:
+        if k not in self._model and not self._model:
             self._seed_model(k, value_list)
+        elif k not in self._model and self._model:
+            # TODO: stuck with one parameter at a time for now; we need to
+            # account for correlations between different parameters on the
+            # outcome first
+            raise NotImplementedError(
+                f"Parameter `{k}` is not in the model. Only one parameter can be added at a time."
+            )
 
         choice = self._choose_parameter(k, value_list)
         self._track_choice(k, choice)
