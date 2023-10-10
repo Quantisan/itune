@@ -18,6 +18,7 @@ class MultiArmedBandit:
 
     def choose(self, value_list):
         values = [self._expected_reward(arm) for arm in self.successes.keys()]
+        # epsilon-greedy
         if random.random() > self.epsilon:
             return self._ensure_chosen_type(
                 list(self.successes.keys())[values.index(max(values))], value_list
