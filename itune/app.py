@@ -1,9 +1,12 @@
 import random
 from typing import Any
 
+from .choose import MultiArmedBandit
+
 
 class Model:
     def __init__(self):
+        # TODO: model, and maybe current_selections too, should be kept in MultiArmedBandit
         self._model: dict[str, dict] = {}
         self._current_selections: dict[str, Any] = {}
 
@@ -41,16 +44,24 @@ class Model:
                 f"model was initialized. Original [{', '.join(original_value_list)}], current values [{', '.join(new_value_list)}]."
             )
 
-        # TODO: implement RL
-        return random.choice(value_list)
+        mab = MultiArmedBandit()
+        choice = mab.choose(self._model[k])
+        return mab.ensure_chosen_type(choice, value_list)
 
     def parameter(self, **kwargs):
         self._validate_parameter_variations(kwargs)
 
         k, value_list = list(kwargs.items())[0]
 
-        if k not in self._model:
+        if k not in self._model and not self._model:
             self._seed_model(k, value_list)
+        elif k not in self._model and self._model:
+            # TODO: stuck with one parameter at a time for now; we need to
+            # account for correlations between different parameters on the
+            # outcome first
+            raise NotImplementedError(
+                f"Parameter `{k}` is not in the model. Only one parameter can be added at a time."
+            )
 
         choice = self._choose_parameter(k, value_list)
         self._track_choice(k, choice)
