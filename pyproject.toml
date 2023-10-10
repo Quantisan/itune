@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "rlhf-wizard"
+name = "itune"
 version = "0.1.0"
 description = ""
 authors = ["Paul Lam <paul@quantisan.com>"]
