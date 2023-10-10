@@ -1,3 +1,6 @@
+import random
+from unittest.mock import patch
+
 import pytest
 
 import itune as itune
@@ -49,3 +52,22 @@ class TestParameter:
         self.model._reset_current_selections()
         with pytest.raises(Exception):
             self.model.parameter(x=[1, 2])
+
+
+class TestOutcome:
+    def test_model_register_outcome(self):
+        with patch.object(random, "choice", return_value=2):
+            assert self.model.parameter(x=[1, 2]) == 2
+        self.model.register_outcome(False)
+        assert self.model._model == {
+            "x": {"successes": {"1": 0, "2": 0}, "failures": {"1": 0, "2": 1}}
+        }
+        assert self.model._current_selections == {}
+
+        with patch.object(random, "choice", return_value=1):
+            assert self.model.parameter(x=[1, 2]) == 1
+        self.model.register_outcome(True)
+        assert self.model._model == {
+            "x": {"successes": {"1": 1, "2": 0}, "failures": {"1": 0, "2": 1}}
+        }
+        assert self.model._current_selections == {}
