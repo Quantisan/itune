@@ -5,6 +5,9 @@ class MultiArmedBandit:
     def __init__(self):
         self.epsilon = 0.05
 
+    def ensure_chosen_type(self, choice_str, value_list):
+        return value_list[value_list.index(eval(choice_str))]
+
     def choose(self, current_states):
         successes = current_states["successes"]
         failures = current_states["failures"]
