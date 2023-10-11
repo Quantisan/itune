@@ -9,7 +9,7 @@ def calculate_expected_reward(successes, failures):
 
 
 class MultiArmedBandit:
-    def __init__(self, epsilon=0.05):
+    def __init__(self, epsilon=0.10):
         self.epsilon = epsilon
         # trial_counts should have a schema, or it could be a class
         self.trial_counts = {}

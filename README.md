@@ -4,23 +4,43 @@ itune is a Python package for optimizing parameters using reinforcement learning
 
 ## Example: Favourite number
 
-Find everyone's favorite number from 1 to 100 (inclusive).
+This code example demonstrates a simple guessing game using `itune`. The algorithm will randomly choose a number from 1 to 5 (inclusive) and ask the user if that is their favourite number. If the user says yes, the algorithm will learn to choose that number more often in the future. If the user says no, the algorithm will continue to explore different numbers.
 
 ```Python
-from itune import Tune, MultiArmedBandit
+from itune import MultiArmedBandit, Tune
 
+MAX_VALUE = 5
+ITERATIONS = 5
 itune = Tune(strategy=MultiArmedBandit())
-print(f"Everyone's favourite number from 1 to 100 (inclusive) is {itune.choose(fav_num=range(1,101))}")
 
+for _ in range(ITERATIONS):
+    print(
+        f"Your favourite number from 1 to {MAX_VALUE} (inclusive) is {itune.choose(fav_num=list(range(1,5+1)))}"
+    )
 
-user_input = input("Agree (y) / Disagree (n)?")
-######################
-# reward function
-itune.register_outcome(user_input == "y")
-######################
+    user_input = input("Yes (y) / No (n)?")
+    ######################
+    # reward function
+    itune.register_outcome(user_input == "y")
+    ######################
 ```
 
-TODO: show output and step through some iterations
+### Output
+
+Suppose your favorite number is 5. The output of the code might look like this:
+
+```bash
+Your favourite number from 1 to 5 (inclusive) is 3
+Yes (y) / No (n)?n
+Your favourite number from 1 to 5 (inclusive) is 4
+Yes (y) / No (n)?n
+Your favourite number from 1 to 5 (inclusive) is 2
+Yes (y) / No (n)?n
+Your favourite number from 1 to 5 (inclusive) is 5
+Yes (y) / No (n)?y
+Your favourite number from 1 to 5 (inclusive) is 5
+Yes (y) / No (n)?y
+```
 
 ## Example: Retrieval Augmented Generation (RAG) application
 
