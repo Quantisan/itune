@@ -9,6 +9,20 @@ def with_model(request):
 
 
 class TestMultiArmedBandit:
+    def test_instantiate_model(self):
+        assert isinstance(MultiArmedBandit(), MultiArmedBandit)
+
+    def test_seed_trial_counts(self):
+        assert self.mab.trial_counts == {}
+        self.mab.choose("x", [1, 2, 3])
+        # check that model is intialized with all the possible values
+        assert self.mab.trial_counts == {
+            "x": {
+                "successes": {"1": 0, "2": 0, "3": 0},
+                "failures": {"1": 0, "2": 0, "3": 0},
+            }
+        }
+
     def test_ensure_chosen_type(self):
         choice = self.mab._ensure_chosen_type("1", [1, 2])
         assert choice == 1

@@ -22,13 +22,6 @@ class TestParameter:
 
         # check that the current selection is tracked
         assert self.model._current_selections == {"x": result}
-        # check that model is intialized with all the possible values
-        assert self.model._model == {
-            "x": {
-                "successes": {"1": 0, "2": 0, "3": 0},
-                "failures": {"1": 0, "2": 0, "3": 0},
-            }
-        }
 
         # check that we cannot call the same parameter again
         with pytest.raises(Exception):
