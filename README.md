@@ -7,16 +7,16 @@ itune is a Python package for optimizing parameters using reinforcement learning
 Find everyone's favorite number from 1 to 100 (inclusive).
 
 ```Python
-import itune
+from itune import Tune, MultiArmedBandit
 
-itune_model = itune.Model()
-print(f"Everyone's favourite number from 1 to 100 (inclusive) is {itune_model.parameter(fav_num=range(1,101))}")
+itune = Tune(strategy=MultiArmedBandit())
+print(f"Everyone's favourite number from 1 to 100 (inclusive) is {itune.choose(fav_num=range(1,101))}")
 
 
 user_input = input("Agree (y) / Disagree (n)?")
 ######################
 # reward function
-itune_model.register_outcome(user_input == "y")
+itune.register_outcome(user_input == "y")
 ######################
 ```
 
@@ -30,19 +30,19 @@ Let's dive into an example from LlamaIndex's Getting Started guide. In this scen
 from llama_index import ServiceContext, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.llms import OpenAI, PaLM
 
-import itune
+from itune import Tune, MultiArmedBandit
 
 documents = SimpleDirectoryReader("data").load_data()
 
-model = itune.Model()
+itune = Tune(strategy=MultiArmedBandit())
 
 
 service_context = ServiceContext.from_defaults(
     #######################################################################
     # pass in acceptable list of values to these parameters and use RLHF to
     # optimize over combinations of them
-    chunk_size=model.parameter(chunk_size=[250, 500, 1000, 2000])
-    llm=model.parameter(llm=[PaLM(), OpenAI()])
+    chunk_size=itune.choose(chunk_size=[250, 500, 1000, 2000])
+    llm=itune.choose(llm=[PaLM(), OpenAI()])
     #######################################################################
 )
 index = VectorStoreIndex.from_documents(documents, service_context=service_context)
@@ -53,7 +53,7 @@ print(response)
 
 user_input = input("Good response?")
 # reward function
-model.register_outcome(user_input == "y")
+itune.register_outcome(user_input == "y")
 ```
 
 TODO: show output and step through some iterations
