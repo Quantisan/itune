@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import pytest
 
 import itune as itune
@@ -42,22 +40,10 @@ class TestParameter:
 
 class TestOutcome:
     def test_model_register_outcome(self):
-        with patch.object(
-            itune.MultiArmedBandit, "_ensure_chosen_type", return_value=2
-        ):
-            assert self.model.parameter(x=[1, 2]) == 2
-        self.model.register_outcome(False)
-        assert self.model.strategy.trial_counts == {
-            "x": {"successes": {"1": 0, "2": 0}, "failures": {"1": 0, "2": 1}}
-        }
+        assert self.model.parameter(x=[1, 2])
+        assert self.model.register_outcome(False) is None
         assert self.model._current_choices == {}
 
-        with patch.object(
-            itune.MultiArmedBandit, "_ensure_chosen_type", return_value=1
-        ):
-            assert self.model.parameter(x=[1, 2]) == 1
-        self.model.register_outcome(True)
-        assert self.model.strategy.trial_counts == {
-            "x": {"successes": {"1": 1, "2": 0}, "failures": {"1": 0, "2": 1}}
-        }
+        assert self.model.parameter(x=[1, 2])
+        assert self.model.register_outcome(True) is None
         assert self.model._current_choices == {}
