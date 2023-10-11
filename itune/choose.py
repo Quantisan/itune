@@ -68,9 +68,7 @@ class MultiArmedBandit:
                 value_list,
             )
         else:
-            return (
-                self._ensure_chosen_type(
-                    random.choice(list(self._arms(parameter))),
-                    value_list,
-                ),
+            return self._ensure_chosen_type(
+                random.choice(list(self._arms(parameter))),
+                value_list,
             )
