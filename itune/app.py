@@ -1,12 +1,9 @@
-from .choose import MultiArmedBandit
-
-
-class Model:
-    def __init__(self):
+class Tune:
+    def __init__(self, strategy):
         self._current_choices = {}
-        self.strategy = MultiArmedBandit()
+        self.strategy = strategy
 
-    def _validate_parameter_argument(self, kwargs):
+    def _validate_choose_argument(self, kwargs):
         if (
             len(kwargs) != 1
             or not isinstance(kwargs.get(list(kwargs.keys())[0]), list)
@@ -20,8 +17,8 @@ class Model:
         else:
             raise Exception(f"Parameter `{parameter}` has already been selected")
 
-    def parameter(self, **kwargs):
-        self._validate_parameter_argument(kwargs)
+    def choose(self, **kwargs):
+        self._validate_choose_argument(kwargs)
         parameter, value_list = list(kwargs.items())[0]
 
         choice = self.strategy.choose(parameter, value_list)
