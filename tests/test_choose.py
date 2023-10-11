@@ -40,3 +40,17 @@ class TestMultiArmedBandit:
         self.mab.choose("x", [1, 2, 3])
         with pytest.raises(NotImplementedError):
             self.mab.choose("y", [4, 5, 6])
+
+    def test_register_outcome_success(self):
+        assert self.mab.choose("x", [1, 2])
+        assert self.mab.register_outcome({"x": 1}, True) is None
+        assert self.mab.trial_counts == {
+            "x": {"successes": {"1": 1, "2": 0}, "failures": {"1": 0, "2": 0}},
+        }
+
+    def test_register_outcome_failure(self):
+        assert self.mab.choose("x", [1, 2])
+        assert self.mab.register_outcome({"x": 1}, False) is None
+        assert self.mab.trial_counts == {
+            "x": {"successes": {"1": 0, "2": 0}, "failures": {"1": 1, "2": 0}},
+        }
