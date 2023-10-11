@@ -72,3 +72,13 @@ class MultiArmedBandit:
                 random.choice(list(self._arms(parameter))),
                 value_list,
             )
+
+    def register_outcome(self, current_selections, is_success):
+        for (
+            this_parameter,
+            this_arm,
+        ) in current_selections.items():
+            if is_success:
+                self.trial_counts[this_parameter]["successes"][str(this_arm)] += 1
+            else:
+                self.trial_counts[this_parameter]["failures"][str(this_arm)] += 1

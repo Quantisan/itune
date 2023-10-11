@@ -20,8 +20,8 @@ class TestParameter:
         result = self.model.parameter(x=[1, 2, 3])
         assert result in [1, 2, 3]
 
-        # check that the current selection is tracked
-        assert self.model._current_selections == {"x": result}
+        # check that the current choices is tracked
+        assert self.model._current_choices == {"x": result}
 
         # check that we cannot call the same parameter again
         with pytest.raises(Exception):
@@ -42,18 +42,22 @@ class TestParameter:
 
 class TestOutcome:
     def test_model_register_outcome(self):
-        with patch.object(itune.MultiArmedBandit, "choose", return_value=2):
+        with patch.object(
+            itune.MultiArmedBandit, "_ensure_chosen_type", return_value=2
+        ):
             assert self.model.parameter(x=[1, 2]) == 2
         self.model.register_outcome(False)
-        assert self.model._model == {
+        assert self.model.strategy.trial_counts == {
             "x": {"successes": {"1": 0, "2": 0}, "failures": {"1": 0, "2": 1}}
         }
-        assert self.model._current_selections == {}
+        assert self.model._current_choices == {}
 
-        with patch.object(itune.MultiArmedBandit, "choose", return_value=1):
+        with patch.object(
+            itune.MultiArmedBandit, "_ensure_chosen_type", return_value=1
+        ):
             assert self.model.parameter(x=[1, 2]) == 1
         self.model.register_outcome(True)
-        assert self.model._model == {
+        assert self.model.strategy.trial_counts == {
             "x": {"successes": {"1": 1, "2": 0}, "failures": {"1": 0, "2": 1}}
         }
-        assert self.model._current_selections == {}
+        assert self.model._current_choices == {}
