@@ -13,9 +13,9 @@ class TestApp:
         assert isinstance(itune.Tune(itune.MultiArmedBandit), itune.Tune)
 
 
-class TestParameter:
-    def test_model_parameter(self):
-        result = self.model.parameter(x=[1, 2, 3])
+class TestChoose:
+    def test_choose(self):
+        result = self.model.choose(x=[1, 2, 3])
         assert result in [1, 2, 3]
 
         # check that the current choices is tracked
@@ -23,27 +23,27 @@ class TestParameter:
 
         # check that we cannot call the same parameter again
         with pytest.raises(Exception):
-            self.model.parameter(x=[1, 2, 3])
+            self.model.choose(x=[1, 2, 3])
 
-    def test_model_parameter_multiple_variations(self):
+    def test_model_choose_multiple_variations(self):
         with pytest.raises(ValueError):
-            self.model.parameter(x=[1, 2, 3], y=[4, 5, 6])
+            self.model.choose(x=[1, 2, 3], y=[4, 5, 6])
 
-    def test_model_parameter_empty_variation(self):
+    def test_model_choose_empty_variation(self):
         with pytest.raises(ValueError):
-            self.model.parameter(x=[])
+            self.model.choose(x=[])
 
-    def test_model_parameter_non_list_variation(self):
+    def test_model_choose_non_list_variation(self):
         with pytest.raises(ValueError):
-            self.model.parameter(x=1)
+            self.model.choose(x=1)
 
 
 class TestOutcome:
     def test_model_register_outcome(self):
-        assert self.model.parameter(x=[1, 2])
+        assert self.model.choose(x=[1, 2])
         assert self.model.register_outcome(False) is None
         assert self.model._current_choices == {}
 
-        assert self.model.parameter(x=[1, 2])
+        assert self.model.choose(x=[1, 2])
         assert self.model.register_outcome(True) is None
         assert self.model._current_choices == {}
