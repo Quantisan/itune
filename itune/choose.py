@@ -32,8 +32,25 @@ class MultiArmedBandit:
             "failures": {str(arm): 0 for arm in arms},
         }
 
+    def _validate_parameter(self, parameter, value_list):
+        if parameter not in self.trial_counts and self.trial_counts:
+            raise NotImplementedError(
+                f"Parameter `{parameter}` is not in the model. Only one parameter can be in play at a time."
+            )
+
+        if parameter in self.trial_counts:
+            existing_arms = set(self._arms(parameter))
+            new_arms = set(map(str, value_list))
+            if existing_arms != new_arms:
+                raise NotImplementedError(
+                    f"Parameter `{parameter}` possible values appear to have changed since the "
+                    f"model was initialized. Original [{', '.join(existing_arms)}], current values [{', '.join(new_arms)}]."
+                )
+
     def choose(self, parameter, value_list):
-        if parameter not in self.trial_counts:
+        self._validate_parameter(parameter, value_list)
+
+        if parameter not in self.trial_counts and not self.trial_counts:
             self._seed_trial_counts(parameter, value_list)
 
         expected_rewards = [

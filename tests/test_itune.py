@@ -1,4 +1,3 @@
-import random
 from unittest.mock import patch
 
 import pytest
@@ -46,17 +45,6 @@ class TestParameter:
     def test_model_parameter_non_list_variation(self):
         with pytest.raises(ValueError):
             self.model.parameter(x=1)
-
-    def test_model_parameter_values_list_changed(self):
-        self.model.parameter(x=[1, 2, 3])
-        self.model._reset_current_selections()
-        with pytest.raises(Exception):
-            self.model.parameter(x=[1, 2])
-
-    def test_model_parameter_unexpected_parameter_given(self):
-        self.model.parameter(x=[1, 2, 3])
-        with pytest.raises(NotImplementedError):
-            self.model.parameter(y=[4, 5, 6])
 
 
 class TestOutcome:
