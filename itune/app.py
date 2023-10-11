@@ -1,4 +1,4 @@
-class Model:
+class Tune:
     def __init__(self, strategy):
         self._current_choices = {}
         self.strategy = strategy

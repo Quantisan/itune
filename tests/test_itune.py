@@ -5,12 +5,12 @@ import itune as itune
 
 @pytest.fixture(autouse=True)
 def with_model(request):
-    request.cls.model = itune.Model(strategy=itune.MultiArmedBandit())
+    request.cls.model = itune.Tune(strategy=itune.MultiArmedBandit())
 
 
 class TestApp:
     def test_instantiate_model(self):
-        assert isinstance(itune.Model(itune.MultiArmedBandit), itune.Model)
+        assert isinstance(itune.Tune(itune.MultiArmedBandit), itune.Tune)
 
 
 class TestParameter:

@@ -1,2 +1,2 @@
-from .app import Model
+from .app import Tune
 from .choose import MultiArmedBandit
