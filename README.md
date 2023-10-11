@@ -44,17 +44,29 @@ Yes (y) / No (n)?y
 
 ## Example: Retrieval Augmented Generation (RAG) application
 
-Let's dive into an example from LlamaIndex's Getting Started guide. In this scenario, we have a procedure with several parameters to fine-tune. For simplicity, we'll focus on just two of them: `chunk_size` and `llm`. We can harness the power of RLHF to discover the most effective combination of these parameters.
+This example requires features not yet available in `itune v0.1`. It demonstrates where the library is headed.
+
+### Problem
+
+Optimizing a user-facing program with multiple parameters can be tedious, especially when the parameters are correlated.
+
+### Solution
+
+Use the `itune` library to discover the most effective combination of parameters. `itune` is a parameter optimizer for user-facing programs.
+
+### Example
+
+The following code shows how to use `itune` to optimize the `chunk_size` and `llm` parameters of a RAG model:
 
 ```Python
 from llama_index import ServiceContext, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.llms import OpenAI, PaLM
 
-from itune import Tune, MultiArmedBandit
+from itune import Tune, ContextualBandit
 
 documents = SimpleDirectoryReader("data").load_data()
 
-itune = Tune(strategy=MultiArmedBandit())
+itune = Tune(strategy=ContextualBandit())
 
 
 service_context = ServiceContext.from_defaults(
@@ -76,7 +88,7 @@ user_input = input("Good response?")
 itune.register_outcome(user_input == "y")
 ```
 
-TODO: show output and step through some iterations
+### Benefits
 
-This example demonstrates how `itune` can be used to optimize procedure parameters by using user feedback to improve outcomes.
+Using `itune` can save you time and effort when writing programs with multiple parameters. It also allows you to focus on developing your end-to-end solution while `itune` figures out the best combination of parameters.
 
