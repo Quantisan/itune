@@ -61,10 +61,13 @@ class MultiArmedBandit:
         ]
         # epsilon-greedy
         if random.random() > self.epsilon:
+            max_reward = max(expected_rewards)
+            max_indices = [
+                i for i, reward in enumerate(expected_rewards) if reward == max_reward
+            ]
+            chosen_index = random.choice(max_indices)
             return self._ensure_chosen_type(
-                list(self._arms(parameter))[
-                    expected_rewards.index(max(expected_rewards))
-                ],
+                list(self._arms(parameter))[chosen_index],
                 value_list,
             )
         else:
