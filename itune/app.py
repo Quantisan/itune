@@ -1,10 +1,7 @@
-from .choose import MultiArmedBandit
-
-
 class Model:
-    def __init__(self):
+    def __init__(self, strategy):
         self._current_choices = {}
-        self.strategy = MultiArmedBandit()
+        self.strategy = strategy
 
     def _validate_parameter_argument(self, kwargs):
         if (
