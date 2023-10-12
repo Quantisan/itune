@@ -48,7 +48,7 @@ Your favourite number from 1 to 5 (inclusive) is 5
 Yes (y) / No (n)?y
 ```
 
-It's worth noting that the `itune` retains its progress by loading and saving its state, enabling seamless continuation from previous sessions.
+It's worth noting that `itune` retains its progress by loading and saving its state, enabling seamless continuation from previous sessions.
 
 ```
 Your favourite number from 1 to 5 (inclusive) is 1
@@ -63,7 +63,7 @@ Your favourite number from 1 to 5 (inclusive) is 5
 Yes (y) / No (n)?y
 ```
 
-During subsequent runs, `itune` tends to favor the previously successful choice.
+During subsequent runs, `itune` tends to favour the previously successful choice.
 
 ## Example: Retrieval Augmented Generation (RAG) application
 
