@@ -1,3 +1,4 @@
+import logging as log
 import pickle
 
 FILENAME = "itune_strategy.pkl"
@@ -46,4 +47,4 @@ class Tune:
             with open(FILENAME, "rb") as f:
                 self.strategy = pickle.load(f)
         except FileNotFoundError:
-            print("No saved model found. Continuing gracefully.")
+            log.info("No saved model found. Continuing gracefully.")
