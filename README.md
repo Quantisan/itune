@@ -2,7 +2,7 @@
 
 itune is a Python package for optimizing parameters using reinforcement learning with human feedback (RLHF).
 
-## Example: Favourite number
+## Example: Favourite number guessing game
 
 This code example demonstrates a simple guessing game using `itune`. The algorithm will randomly choose a number from 1 to 5 (inclusive) and ask the user if that is their favourite number. If the user says yes, the algorithm will learn to choose that number more often in the future. If the user says no, the algorithm will continue to explore different numbers.
 
@@ -12,6 +12,9 @@ from itune import MultiArmedBandit, Tune
 MAX_VALUE = 5
 ITERATIONS = 5
 itune = Tune(strategy=MultiArmedBandit())
+
+# pick up from where we left off, if possible. Otherwise, this continues gracefully.
+itune.load()
 
 for _ in range(ITERATIONS):
     print(
@@ -23,13 +26,16 @@ for _ in range(ITERATIONS):
     # reward function
     itune.register_outcome(user_input == "y")
     ######################
+
+# save the learned states for later use
+itune.save()
 ```
 
 ### Output
 
 Suppose your favorite number is 5. The output of the code might look like this:
 
-```bash
+```
 Your favourite number from 1 to 5 (inclusive) is 3
 Yes (y) / No (n)?n
 Your favourite number from 1 to 5 (inclusive) is 4
@@ -41,6 +47,23 @@ Yes (y) / No (n)?y
 Your favourite number from 1 to 5 (inclusive) is 5
 Yes (y) / No (n)?y
 ```
+
+It's worth noting that the `itune` retains its progress by loading and saving its state, enabling seamless continuation from previous sessions.
+
+```
+Your favourite number from 1 to 5 (inclusive) is 1
+Yes (y) / No (n)?n
+Your favourite number from 1 to 5 (inclusive) is 5
+Yes (y) / No (n)?y
+Your favourite number from 1 to 5 (inclusive) is 5
+Yes (y) / No (n)?y
+Your favourite number from 1 to 5 (inclusive) is 5
+Yes (y) / No (n)?y
+Your favourite number from 1 to 5 (inclusive) is 5
+Yes (y) / No (n)?y
+```
+
+During subsequent runs, `itune` tends to favor the previously successful choice.
 
 ## Example: Retrieval Augmented Generation (RAG) application
 
