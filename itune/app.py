@@ -41,10 +41,13 @@ class Tune:
     def save(self):
         with open(FILENAME, "wb") as f:
             pickle.dump(self.strategy, f)
+        log.info("Saved itune model")
 
     def load(self):
         try:
             with open(FILENAME, "rb") as f:
                 self.strategy = pickle.load(f)
+            log.info("Loaded saved itune model")
+
         except FileNotFoundError:
-            log.info("No saved model found. Continuing gracefully.")
+            log.info("No saved itune model found. Continuing gracefully.")

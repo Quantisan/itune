@@ -19,7 +19,7 @@ class TestApp:
             assert self.model.load() is None
         for record in caplog.records:
             assert record.levelname == "INFO"
-        assert "No saved model found" in caplog.text
+        assert "No saved" in caplog.text
 
         assert isinstance(self.model.strategy, itune.MultiArmedBandit)
 
