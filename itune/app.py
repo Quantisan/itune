@@ -1,3 +1,8 @@
+import pickle
+
+FILENAME = "itune_strategy.pkl"
+
+
 class Tune:
     def __init__(self, strategy):
         self._current_choices = {}
@@ -31,3 +36,14 @@ class Tune:
     def register_outcome(self, is_success: bool):
         self.strategy.register_outcome(self._current_choices, is_success)
         self._reset_current_choices()
+
+    def save(self):
+        with open(FILENAME, "wb") as f:
+            pickle.dump(self.strategy, f)
+
+    def load(self):
+        try:
+            with open(FILENAME, "rb") as f:
+                self.strategy = pickle.load(f)
+        except FileNotFoundError:
+            print("No saved model found. Continuing gracefully.")

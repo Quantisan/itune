@@ -12,6 +12,24 @@ class TestApp:
     def test_instantiate_model(self):
         assert isinstance(itune.Tune(itune.MultiArmedBandit), itune.Tune)
 
+    def test_save_and_load(self):
+        self.model.choose(x=[1, 2])
+        self.model.register_outcome(False)
+        assert sum(self.model.strategy.trial_counts["x"]["successes"].values()) == 0
+        assert sum(self.model.strategy.trial_counts["x"]["failures"].values()) == 1
+        assert self.model.save() is None
+
+        fresh_model = itune.Tune(itune.MultiArmedBandit())
+        assert fresh_model.load() is None
+        assert isinstance(fresh_model.strategy, itune.MultiArmedBandit)
+        assert sum(fresh_model.strategy.trial_counts["x"]["successes"].values()) == 0
+        assert sum(fresh_model.strategy.trial_counts["x"]["failures"].values()) == 1
+
+        # remove the saved file
+        import os
+
+        os.remove(itune.app.FILENAME)
+
 
 class TestChoose:
     def test_choose(self):
