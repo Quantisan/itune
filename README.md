@@ -115,3 +115,11 @@ itune.register_outcome(user_input == "y")
 
 Using `itune` can save you time and effort when writing programs with multiple parameters. It also allows you to focus on developing your end-to-end solution while `itune` figures out the best combination of parameters.
 
+## Installing
+
+Install and update using `pip`:
+
+```
+$ pip install itune
+```
+
