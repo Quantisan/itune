@@ -5,6 +5,7 @@ description = ""
 authors = ["Paul Lam <paul@quantisan.com>"]
 readme = "README.md"
 
+
 [tool.poetry.dependencies]
 python = "^3.11"
 
@@ -12,6 +13,14 @@ python = "^3.11"
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.2"
 black = "^23.9.1"
+
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^7.2.6"
+
 
 [build-system]
 requires = ["poetry-core"]
