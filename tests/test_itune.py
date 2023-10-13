@@ -79,6 +79,10 @@ class TestChoose:
         with pytest.raises(ValueError):
             self.model.choose(x=1)
 
+    def test_choose_non_primative_type(self):
+        chosen = self.model.choose(cls=[str, int])
+        assert chosen in [str, int]
+
 
 class TestOutcome:
     def test_model_register_outcome(self):
