@@ -78,17 +78,7 @@ class MultiArmedBandit:
             )
         return chosen
 
-    def choose(self, parameter, value_list, only_choose_winning=False):
-        if only_choose_winning:
-            chosen = self.choose_winning(parameter)
-            return self._ensure_chosen_type(chosen, value_list)
-
-        self._validate_parameter(parameter, value_list)
-
-        if parameter not in self.trial_counts and not self.trial_counts:
-            self._seed_trial_counts(parameter, value_list)
-
-        # epsilon-greedy
+    def _choose_with_epsilon_greedy(self, parameter):
         if random.random() > self.epsilon:
             current_winners, winning_reward = self._current_winners(parameter)
             chosen = random.choice(current_winners)
@@ -100,6 +90,19 @@ class MultiArmedBandit:
             logging.debug(
                 f"MultiArmedBandit chose {chosen} for parameter {parameter} randomly"
             )
+        return chosen
+
+    def choose(self, parameter, value_list, only_choose_winning=False):
+        if only_choose_winning:
+            chosen = self.choose_winning(parameter)
+            return self._ensure_chosen_type(chosen, value_list)
+
+        self._validate_parameter(parameter, value_list)
+
+        if parameter not in self.trial_counts and not self.trial_counts:
+            self._seed_trial_counts(parameter, value_list)
+
+        chosen = self._choose_with_epsilon_greedy(parameter)
         return self._ensure_chosen_type(chosen, value_list)
 
     def register_outcome(self, current_selections, is_success):
