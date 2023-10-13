@@ -95,10 +95,14 @@ class Tune:
             )
 
     def _load(self):
-        # TODO: check that loaded model is same as instance initialized model
         try:
             with open(self.filepath, "rb") as f:
-                self.strategy = pickle.load(f)
+                loaded_strategy = pickle.load(f)
+                if not isinstance(loaded_strategy, self.strategy.__class__):
+                    raise TypeError(
+                        f"Loaded strategy is of type {type(loaded_strategy)} but expected type {type(self.strategy)}"
+                    )
+                self.strategy = loaded_strategy
             log.info(f"Loaded saved itune model with strategy {self.strategy}")
 
         except FileNotFoundError:
