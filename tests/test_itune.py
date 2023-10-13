@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 import itune as itune
@@ -11,6 +13,15 @@ def with_model(request):
 class TestApp:
     def test_instantiate_model(self):
         assert isinstance(itune.Tune(itune.MultiArmedBandit), itune.Tune)
+
+    def test_load_nonexistent_model(self, caplog):
+        with caplog.at_level(logging.INFO):
+            assert self.model.load() is None
+        for record in caplog.records:
+            assert record.levelname == "INFO"
+        assert "No saved" in caplog.text
+
+        assert isinstance(self.model.strategy, itune.MultiArmedBandit)
 
     def test_save_and_load(self):
         self.model.choose(x=[1, 2])
@@ -32,9 +43,15 @@ class TestApp:
 
 
 class TestChoose:
-    def test_choose(self):
-        result = self.model.choose(x=[1, 2, 3])
+    def test_choose(self, caplog):
+        with caplog.at_level(logging.INFO):
+            result = self.model.choose(x=[1, 2, 3])
+        # assert that it works
         assert result in [1, 2, 3]
+        # assert that it logged
+        for record in caplog.records:
+            assert record.levelname == "INFO"
+        assert "Chose" in caplog.text
 
         # check that the current choices is tracked
         assert self.model._current_choices == {"x": result}

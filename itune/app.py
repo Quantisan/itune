@@ -1,3 +1,4 @@
+import logging as log
 import pickle
 
 FILENAME = "itune_strategy.pkl"
@@ -28,6 +29,7 @@ class Tune:
 
         choice = self.strategy.choose(parameter, value_list)
         self._track_choice(parameter, choice)
+        log.info(f"Chose {choice} for parameter {parameter}")
         return choice
 
     def _reset_current_choices(self):
@@ -40,10 +42,13 @@ class Tune:
     def save(self):
         with open(FILENAME, "wb") as f:
             pickle.dump(self.strategy, f)
+        log.info("Saved itune model")
 
     def load(self):
         try:
             with open(FILENAME, "rb") as f:
                 self.strategy = pickle.load(f)
+            log.info("Loaded saved itune model")
+
         except FileNotFoundError:
-            print("No saved model found. Continuing gracefully.")
+            log.info("No saved itune model found. Continuing gracefully.")
