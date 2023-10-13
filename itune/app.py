@@ -25,6 +25,7 @@ class Tune:
         self._current_choices = {}
         self.only_choose_winning_params = only_choose_winning_params
         self.strategy = strategy
+        self._load()
 
     def _validate_choose_argument(self, kwargs):
         if (
@@ -76,8 +77,9 @@ class Tune:
         """
         self.strategy.register_outcome(self._current_choices, is_success)
         self._reset_current_choices()
+        self._save()
 
-    def save(self):
+    def _save(self):
         if not self.only_choose_winning_params:
             with open(FILENAME, "wb") as f:
                 pickle.dump(self.strategy, f)
@@ -87,7 +89,8 @@ class Tune:
                 "Not saving itune model because only_choose_winning_params is True"
             )
 
-    def load(self):
+    def _load(self):
+        # TODO: check that loaded model is same as instance initialized model
         try:
             with open(FILENAME, "rb") as f:
                 self.strategy = pickle.load(f)
