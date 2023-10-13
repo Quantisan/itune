@@ -19,7 +19,7 @@ class TestApp:
             assert self.model.load() is None
         for record in caplog.records:
             assert record.levelname == "INFO"
-        assert "No saved" in caplog.text
+        assert "No saved itune model found" in caplog.text
 
         assert isinstance(self.model.strategy, itune.MultiArmedBandit)
 
@@ -82,3 +82,29 @@ class TestOutcome:
         assert self.model.choose(x=[1, 2])
         assert self.model.register_outcome(True) is None
         assert self.model._current_choices == {}
+
+
+class TestOnlyChooseWinningParams:
+    def test_choose_winner(self, caplog):
+        arms = list(range(1, 100))
+        chosen = self.model.choose(x=arms)
+        self.model.register_outcome(True)
+
+        # only_choose_winning_params doesn't initialize states by design,
+        # so we had to run it a cycle (above) first before we can test it
+        self.model.only_choose_winning_params = True
+
+        with caplog.at_level(logging.INFO):
+            assert self.model.choose(x=arms) == chosen
+        assert "only_choose_winning_params is True" in caplog.text
+
+    def test_load_still_works(self):
+        self.model.only_choose_winning_params = True
+        assert self.model.load() is None
+        assert isinstance(self.model.strategy, itune.MultiArmedBandit)
+
+    def test_save_is_skipped(self, caplog):
+        self.model.only_choose_winning_params = True
+        with caplog.at_level(logging.INFO):
+            assert self.model.save() is None
+        assert "Not saving" in caplog.text
