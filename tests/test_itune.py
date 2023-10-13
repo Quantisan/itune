@@ -33,8 +33,7 @@ class TestApp:
         fresh_model = itune.Tune(itune.MultiArmedBandit())
         assert fresh_model.load() is None
         assert isinstance(fresh_model.strategy, itune.MultiArmedBandit)
-        assert sum(fresh_model.strategy.trial_counts["x"]["successes"].values()) == 0
-        assert sum(fresh_model.strategy.trial_counts["x"]["failures"].values()) == 1
+        assert fresh_model.strategy.trial_counts == self.model.strategy.trial_counts
 
         # remove the saved file
         import os
