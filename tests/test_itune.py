@@ -9,7 +9,7 @@ def wipe_persisted_model():
     import os
 
     try:
-        os.remove(itune.app.FILENAME)
+        os.remove(itune.app.DEFAULT_FILEPATH)
     except FileNotFoundError:
         pass
 

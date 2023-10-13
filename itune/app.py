@@ -1,7 +1,7 @@
 import logging as log
 import pickle
 
-FILENAME = "itune_strategy.pkl"
+DEFAULT_FILEPATH = "./.itune_strategy.pkl"
 
 
 class Tune:
@@ -14,6 +14,8 @@ class Tune:
     Args:
         strategy (object): An object that defines the reinforcement learning strategy to
                            be used.
+        filepath (str, optional): The filepath to save the strategy object to. Defaults
+                                  to `./.itune_strategy.pkl`.
         only_choose_winning_params (bool, optional): Whether to only choose the current
                                                      winning parameters. This is useful
                                                      in production to ensure determinism
@@ -21,10 +23,13 @@ class Tune:
                                                      `False`.
     """
 
-    def __init__(self, strategy, only_choose_winning_params=False):
+    def __init__(
+        self, strategy, filepath=DEFAULT_FILEPATH, only_choose_winning_params=False
+    ):
         self._current_choices = {}
         self.only_choose_winning_params = only_choose_winning_params
         self.strategy = strategy
+        self.filepath = filepath
         self._load()
 
     def _validate_choose_argument(self, kwargs):
@@ -81,7 +86,7 @@ class Tune:
 
     def _save(self):
         if not self.only_choose_winning_params:
-            with open(FILENAME, "wb") as f:
+            with open(self.filepath, "wb") as f:
                 pickle.dump(self.strategy, f)
             log.info(f"Saved itune model with strategy {self.strategy}")
         else:
@@ -92,7 +97,7 @@ class Tune:
     def _load(self):
         # TODO: check that loaded model is same as instance initialized model
         try:
-            with open(FILENAME, "rb") as f:
+            with open(self.filepath, "rb") as f:
                 self.strategy = pickle.load(f)
             log.info(f"Loaded saved itune model with strategy {self.strategy}")
 
