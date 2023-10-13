@@ -5,6 +5,17 @@ FILENAME = "itune_strategy.pkl"
 
 
 class Tune:
+    """
+    The tune object implements a reinforcement learning with human feedback strategy for
+    parameter tuning. It is initialized with a reinforcement learning strategy and
+    provides methods for choosing parameters and registering the success or failure of
+    the chosen parameters.
+
+    Args:
+        strategy (object): An object that defines the reinforcement learning strategy to
+                           be used.
+    """
+
     def __init__(self, strategy):
         self._current_choices = {}
         self.strategy = strategy
