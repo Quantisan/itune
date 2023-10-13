@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "itune"
-version = "0.2.0.dev0"
+version = "0.2.0"
 description = "i tune your parameters so you don't have to"
 authors = ["Paul Lam <paul@quantisan.com>"]
 readme = "README.md"
