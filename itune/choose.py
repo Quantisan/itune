@@ -95,13 +95,12 @@ class MultiArmedBandit:
             logging.debug(
                 f"MultiArmedBandit chose {chosen} for parameter {parameter}, because it has a max reward of {winning_reward}"
             )
-            return self._ensure_chosen_type(chosen, value_list)
         else:
             chosen = random.choice(list(self._arms(parameter)))
             logging.debug(
                 f"MultiArmedBandit chose {chosen} for parameter {parameter} randomly"
             )
-            return self._ensure_chosen_type(chosen, value_list)
+        return self._ensure_chosen_type(chosen, value_list)
 
     def register_outcome(self, current_selections, is_success):
         for (
