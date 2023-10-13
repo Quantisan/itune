@@ -54,28 +54,31 @@ class MultiArmedBandit:
                     f"model was initialized. Original [{', '.join(existing_arms)}], current values [{', '.join(new_arms)}]."
                 )
 
-    def choose(self, parameter, value_list):
-        self._validate_parameter(parameter, value_list)
-
-        if parameter not in self.trial_counts and not self.trial_counts:
-            self._seed_trial_counts(parameter, value_list)
-
+    def _current_winners(self, parameter):
         expected_rewards = [
             calculate_expected_reward(
                 self._successes(parameter, arm), self._failures(parameter, arm)
             )
             for arm in self._arms(parameter)
         ]
+        max_reward = max(expected_rewards)
+        max_indices = [
+            i for i, reward in enumerate(expected_rewards) if reward == max_reward
+        ]
+        return [list(self._arms(parameter))[i] for i in max_indices], max_reward
+
+    def choose(self, parameter, value_list):
+        self._validate_parameter(parameter, value_list)
+
+        if parameter not in self.trial_counts and not self.trial_counts:
+            self._seed_trial_counts(parameter, value_list)
+
         # epsilon-greedy
         if random.random() > self.epsilon:
-            max_reward = max(expected_rewards)
-            max_indices = [
-                i for i, reward in enumerate(expected_rewards) if reward == max_reward
-            ]
-            chosen_index = random.choice(max_indices)
-            chosen = list(self._arms(parameter))[chosen_index]
+            current_winners, winning_reward = self._current_winners(parameter)
+            chosen = random.choice(current_winners)
             logging.debug(
-                f"MultiArmedBandit chose {chosen} for parameter {parameter}, because it has a max reward of {max_reward}"
+                f"MultiArmedBandit chose {chosen} for parameter {parameter}, because it has a max reward of {winning_reward}"
             )
             return self._ensure_chosen_type(chosen, value_list)
         else:
