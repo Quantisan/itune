@@ -41,6 +41,12 @@ class Tune:
             raise Exception(f"Parameter `{parameter}` has already been selected")
 
     def choose(self, **kwargs):
+        """
+        Choose a value for a given parameter based on the current strategy.
+
+        :param kwargs: A dictionary with a single key-value pair representing the parameter and its possible values.
+        :return: The chosen value for the parameter.
+        """
         self._validate_choose_argument(kwargs)
         parameter, value_list = list(kwargs.items())[0]
 
@@ -61,6 +67,13 @@ class Tune:
         self._current_choices = {}
 
     def register_outcome(self, is_success: bool):
+        """
+        Registers the outcome of the current played choices made by the current strategy.
+
+        Args:
+            is_success (bool): A boolean value indicating whether the played choices were
+                               successful or not.
+        """
         self.strategy.register_outcome(self._current_choices, is_success)
         self._reset_current_choices()
 
