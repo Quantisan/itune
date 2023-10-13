@@ -44,9 +44,17 @@ class Tune:
         self._validate_choose_argument(kwargs)
         parameter, value_list = list(kwargs.items())[0]
 
-        choice = self.strategy.choose(parameter, value_list)
+        choice = self.strategy.choose(
+            parameter, value_list, self.only_choose_winning_params
+        )
         self._track_choice(parameter, choice)
-        log.info(f"Chose {choice} for parameter {parameter}")
+        if self.only_choose_winning_params:
+            log.info(
+                f"Chose current winner {choice} for parameter {parameter} (only_choose_winning_params is True)"
+            )
+        else:
+            log.info(f"Chose {choice} for parameter {parameter}")
+
         return choice
 
     def _reset_current_choices(self):

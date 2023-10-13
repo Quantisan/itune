@@ -67,7 +67,23 @@ class MultiArmedBandit:
         ]
         return [list(self._arms(parameter))[i] for i in max_indices], max_reward
 
-    def choose(self, parameter, value_list):
+    def choose_winning(self, parameter, value_list):
+        current_winners, _ = self._current_winners(parameter)
+        if len(current_winners) > 1:
+            chosen = current_winners[0]
+            logging.info(
+                "MultiArmedBandit found more than one winner for parameter "
+                f"{parameter} even though only_choose_winning_params is `True`."
+                f"Arbitrarily choosing the first winner that came up, {chosen}."
+            )
+            return chosen
+        else:
+            return current_winners[0]
+
+    def choose(self, parameter, value_list, only_choose_winning=False):
+        if only_choose_winning:
+            return self.choose_winning(parameter, value_list)
+
         self._validate_parameter(parameter, value_list)
 
         if parameter not in self.trial_counts and not self.trial_counts:
