@@ -1,7 +1,7 @@
 import logging as log
 import pickle
 
-FILENAME = "itune_strategy.pkl"
+DEFAULT_FILEPATH = "./.itune_strategy.pkl"
 
 
 class Tune:
@@ -81,7 +81,7 @@ class Tune:
 
     def _save(self):
         if not self.only_choose_winning_params:
-            with open(FILENAME, "wb") as f:
+            with open(DEFAULT_FILEPATH, "wb") as f:
                 pickle.dump(self.strategy, f)
             log.info(f"Saved itune model with strategy {self.strategy}")
         else:
@@ -92,7 +92,7 @@ class Tune:
     def _load(self):
         # TODO: check that loaded model is same as instance initialized model
         try:
-            with open(FILENAME, "rb") as f:
+            with open(DEFAULT_FILEPATH, "rb") as f:
                 self.strategy = pickle.load(f)
             log.info(f"Loaded saved itune model with strategy {self.strategy}")
 
