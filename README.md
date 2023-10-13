@@ -13,9 +13,6 @@ MAX_VALUE = 5
 ITERATIONS = 5
 itune = Tune(strategy=MultiArmedBandit())
 
-# pick up from where we left off, if possible. Otherwise, this continues gracefully.
-itune.load()
-
 for _ in range(ITERATIONS):
     print(
         f"Your favourite number from 1 to {MAX_VALUE} (inclusive) is {itune.choose(fav_num=list(range(1,5+1)))}"
@@ -27,8 +24,6 @@ for _ in range(ITERATIONS):
     itune.register_outcome(user_input == "y")
     ######################
 
-# save the learned states for later use
-itune.save()
 ```
 
 ### Output
@@ -48,7 +43,7 @@ Your favourite number from 1 to 5 (inclusive) is 5
 Yes (y) / No (n)?y
 ```
 
-It's worth noting that `itune` retains its progress by loading and saving its state, enabling seamless continuation from previous sessions.
+It's worth noting that `itune` retains its progress by loading and saving its state implicitly, enabling seamless continuation from previous sessions.
 
 ```
 Your favourite number from 1 to 5 (inclusive) is 1
