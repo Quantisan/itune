@@ -14,10 +14,16 @@ class Tune:
     Args:
         strategy (object): An object that defines the reinforcement learning strategy to
                            be used.
+        only_choose_winning_params (bool, optional): Whether to only choose the current
+                                                     winning parameters. This is useful
+                                                     in production to ensure determinism
+                                                     of your parameters. Defaults to
+                                                     `False`.
     """
 
-    def __init__(self, strategy):
+    def __init__(self, strategy, only_choose_winning_params=False):
         self._current_choices = {}
+        self.only_choose_winning_params = only_choose_winning_params
         self.strategy = strategy
 
     def _validate_choose_argument(self, kwargs):
@@ -51,9 +57,14 @@ class Tune:
         self._reset_current_choices()
 
     def save(self):
-        with open(FILENAME, "wb") as f:
-            pickle.dump(self.strategy, f)
-        log.info(f"Saved itune model with strategy {self.strategy}")
+        if not self.only_choose_winning_params:
+            with open(FILENAME, "wb") as f:
+                pickle.dump(self.strategy, f)
+            log.info(f"Saved itune model with strategy {self.strategy}")
+        else:
+            log.info(
+                "Not saving itune model because only_choose_winning_params is True"
+            )
 
     def load(self):
         try:
