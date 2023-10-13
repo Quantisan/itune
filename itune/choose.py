@@ -15,6 +15,12 @@ class MultiArmedBandit:
         # trial_counts should have a schema, or it could be a class
         self.trial_counts = {}
 
+    def __str__(self) -> str:
+        return f"MultiArmedBandit(epsilon={self.epsilon}, trial_counts={self.trial_counts})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def _arms(self, parameter):
         return list(self.trial_counts[parameter]["successes"].keys())
 
