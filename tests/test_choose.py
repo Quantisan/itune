@@ -50,6 +50,26 @@ class TestMultiArmedBandit:
         with pytest.raises(NotImplementedError):
             self.mab.choose("y", [4, 5, 6])
 
+    def test_choose_winning(self, caplog):
+        arms = list(range(1, 100))
+        self.mab.choose("x", arms)
+        fixed_choice = 77
+        self.mab.register_outcome({"x": fixed_choice}, True)
+        with caplog.at_level(logging.INFO):
+            assert self.mab.choose_winning("x") == str(fixed_choice)
+        assert caplog.text == ""
+
+    def test_choose_winning_multi_winners(self, caplog):
+        arms = list(range(1, 100))
+        self.mab.choose("x", arms)
+        fixed_choice = 77
+        self.mab.register_outcome({"x": fixed_choice}, True)
+        self.mab.register_outcome({"x": fixed_choice + 1}, True)
+        self.mab.register_outcome({"x": fixed_choice + 2}, True)
+        with caplog.at_level(logging.INFO):
+            assert self.mab.choose_winning("x") == str(fixed_choice)
+        assert "found more than one winner" in caplog.text
+
     def test_register_outcome_success(self):
         assert self.mab.choose("x", [1, 2])
         assert self.mab.register_outcome({"x": 1}, True) is None

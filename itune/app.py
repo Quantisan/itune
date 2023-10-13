@@ -5,8 +5,25 @@ FILENAME = "itune_strategy.pkl"
 
 
 class Tune:
-    def __init__(self, strategy):
+    """
+    The tune object implements a reinforcement learning with human feedback strategy for
+    parameter tuning. It is initialized with a reinforcement learning strategy and
+    provides methods for choosing parameters and registering the success or failure of
+    the chosen parameters.
+
+    Args:
+        strategy (object): An object that defines the reinforcement learning strategy to
+                           be used.
+        only_choose_winning_params (bool, optional): Whether to only choose the current
+                                                     winning parameters. This is useful
+                                                     in production to ensure determinism
+                                                     of your parameters. Defaults to
+                                                     `False`.
+    """
+
+    def __init__(self, strategy, only_choose_winning_params=False):
         self._current_choices = {}
+        self.only_choose_winning_params = only_choose_winning_params
         self.strategy = strategy
 
     def _validate_choose_argument(self, kwargs):
@@ -27,9 +44,17 @@ class Tune:
         self._validate_choose_argument(kwargs)
         parameter, value_list = list(kwargs.items())[0]
 
-        choice = self.strategy.choose(parameter, value_list)
+        choice = self.strategy.choose(
+            parameter, value_list, self.only_choose_winning_params
+        )
         self._track_choice(parameter, choice)
-        log.info(f"Chose {choice} for parameter {parameter}")
+        if self.only_choose_winning_params:
+            log.info(
+                f"Chose current winner {choice} for parameter {parameter} (only_choose_winning_params is True)"
+            )
+        else:
+            log.info(f"Chose {choice} for parameter {parameter}")
+
         return choice
 
     def _reset_current_choices(self):
@@ -40,9 +65,14 @@ class Tune:
         self._reset_current_choices()
 
     def save(self):
-        with open(FILENAME, "wb") as f:
-            pickle.dump(self.strategy, f)
-        log.info(f"Saved itune model with strategy {self.strategy}")
+        if not self.only_choose_winning_params:
+            with open(FILENAME, "wb") as f:
+                pickle.dump(self.strategy, f)
+            log.info(f"Saved itune model with strategy {self.strategy}")
+        else:
+            log.info(
+                "Not saving itune model because only_choose_winning_params is True"
+            )
 
     def load(self):
         try:
