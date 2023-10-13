@@ -102,4 +102,11 @@ class Tune:
             log.info(f"Loaded saved itune model with strategy {self.strategy}")
 
         except FileNotFoundError:
-            log.info("No saved itune model found. Continuing gracefully.")
+            if self.only_choose_winning_params:
+                raise FileNotFoundError(
+                    f"only_choose_winning_params is True but no saved itune model found at {self.filepath}"
+                )
+            else:
+                log.info(
+                    f"No saved itune model found at {self.filepath}. Continuing gracefully."
+                )

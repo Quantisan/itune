@@ -105,10 +105,10 @@ class TestOnlyChooseWinningParams:
             assert self.model.choose(x=arms) == chosen
         assert "only_choose_winning_params is True" in caplog.text
 
-    def test_load_still_works(self):
+    def test_load_without_saved_model_should_fail(self):
         self.model.only_choose_winning_params = True
-        assert self.model._load() is None
-        assert isinstance(self.model.strategy, itune.MultiArmedBandit)
+        with pytest.raises(FileNotFoundError):
+            self.model._load()
 
     def test_save_is_skipped(self, caplog):
         self.model.only_choose_winning_params = True
