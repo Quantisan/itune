@@ -43,9 +43,15 @@ class TestApp:
 
 
 class TestChoose:
-    def test_choose(self):
-        result = self.model.choose(x=[1, 2, 3])
+    def test_choose(self, caplog):
+        with caplog.at_level(logging.INFO):
+            result = self.model.choose(x=[1, 2, 3])
+        # assert that it works
         assert result in [1, 2, 3]
+        # assert that it logged
+        for record in caplog.records:
+            assert record.levelname == "INFO"
+        assert "Chose" in caplog.text
 
         # check that the current choices is tracked
         assert self.model._current_choices == {"x": result}

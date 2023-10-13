@@ -1,3 +1,4 @@
+import logging
 import random
 
 
@@ -66,15 +67,17 @@ class MultiArmedBandit:
                 i for i, reward in enumerate(expected_rewards) if reward == max_reward
             ]
             chosen_index = random.choice(max_indices)
-            return self._ensure_chosen_type(
-                list(self._arms(parameter))[chosen_index],
-                value_list,
+            chosen = list(self._arms(parameter))[chosen_index]
+            logging.debug(
+                f"MultiArmedBandit chose {chosen} for parameter {parameter}, because it has a max reward of {max_reward}"
             )
+            return self._ensure_chosen_type(chosen, value_list)
         else:
-            return self._ensure_chosen_type(
-                random.choice(list(self._arms(parameter))),
-                value_list,
+            chosen = random.choice(list(self._arms(parameter)))
+            logging.debug(
+                f"MultiArmedBandit chose {chosen} for parameter {parameter} randomly"
             )
+            return self._ensure_chosen_type(chosen, value_list)
 
     def register_outcome(self, current_selections, is_success):
         for (

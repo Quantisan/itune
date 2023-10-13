@@ -29,6 +29,7 @@ class Tune:
 
         choice = self.strategy.choose(parameter, value_list)
         self._track_choice(parameter, choice)
+        log.info(f"Chose {choice} for parameter {parameter}")
         return choice
 
     def _reset_current_choices(self):

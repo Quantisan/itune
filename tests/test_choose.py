@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from itune import MultiArmedBandit
@@ -27,9 +29,16 @@ class TestMultiArmedBandit:
         choice = self.mab._ensure_chosen_type("1", [1, 2])
         assert choice == 1
 
-    def test_mab_choose(self):
-        choice = self.mab.choose("x", [1, 2])
+    def test_mab_choose(self, caplog):
+        with caplog.at_level(logging.DEBUG):
+            choice = self.mab.choose("x", [1, 2])
+        # assert that it works
         assert choice in [1, 2]
+
+        # assert that it logged
+        for record in caplog.records:
+            assert record.levelname == "DEBUG"
+        assert "chose" in caplog.text
 
     def test_model_parameter_values_list_changed(self):
         self.mab.choose("x", [1, 2, 3])
