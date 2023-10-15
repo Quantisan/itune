@@ -20,14 +20,10 @@ class TestMultiArmedBandit:
         # check that model is intialized with all the possible values
         assert self.mab.trial_counts == {
             "x": {
-                "successes": {"1": 0, "2": 0, "3": 0},
-                "failures": {"1": 0, "2": 0, "3": 0},
+                "successes": {1: 0, 2: 0, 3: 0},
+                "failures": {1: 0, 2: 0, 3: 0},
             }
         }
-
-    def test_ensure_chosen_type(self):
-        choice = self.mab._ensure_chosen_type("1", [1, 2])
-        assert choice == 1
 
     def test_mab_choose(self, caplog):
         with caplog.at_level(logging.DEBUG):
@@ -56,7 +52,7 @@ class TestMultiArmedBandit:
         fixed_choice = 77
         self.mab.register_outcome({"x": fixed_choice}, True)
         with caplog.at_level(logging.INFO):
-            assert self.mab.choose_winning("x") == str(fixed_choice)
+            assert self.mab.choose_winning("x") == fixed_choice
         assert caplog.text == ""
 
     def test_choose_winning_multi_winners(self, caplog):
@@ -67,19 +63,19 @@ class TestMultiArmedBandit:
         self.mab.register_outcome({"x": fixed_choice + 1}, True)
         self.mab.register_outcome({"x": fixed_choice + 2}, True)
         with caplog.at_level(logging.INFO):
-            assert self.mab.choose_winning("x") == str(fixed_choice)
+            assert self.mab.choose_winning("x") == fixed_choice
         assert "found more than one winner" in caplog.text
 
     def test_register_outcome_success(self):
         assert self.mab.choose("x", [1, 2])
         assert self.mab.register_outcome({"x": 1}, True) is None
         assert self.mab.trial_counts == {
-            "x": {"successes": {"1": 1, "2": 0}, "failures": {"1": 0, "2": 0}},
+            "x": {"successes": {1: 1, 2: 0}, "failures": {1: 0, 2: 0}},
         }
 
     def test_register_outcome_failure(self):
         assert self.mab.choose("x", [1, 2])
         assert self.mab.register_outcome({"x": 1}, False) is None
         assert self.mab.trial_counts == {
-            "x": {"successes": {"1": 0, "2": 0}, "failures": {"1": 1, "2": 0}},
+            "x": {"successes": {1: 0, 2: 0}, "failures": {1: 1, 2: 0}},
         }

@@ -79,6 +79,20 @@ class TestChoose:
         with pytest.raises(ValueError):
             self.model.choose(x=1)
 
+    def test_choose_classes(self):
+        classes = [str, itune.MultiArmedBandit]
+        chosen = self.model.choose(cls=classes)
+        assert chosen in classes
+
+    def test_choose_functions(self):
+        def foo(x):
+            return x + 1
+
+        fns = [foo, lambda x: x + 1]
+        chosen = self.model.choose(fn=fns)
+        assert chosen in fns
+        assert chosen(1) == 2
+
 
 class TestOutcome:
     def test_model_register_outcome(self):

@@ -30,13 +30,10 @@ class MultiArmedBandit:
     def _failures(self, parameter, arm):
         return self.trial_counts[parameter]["failures"][arm]
 
-    def _ensure_chosen_type(self, choice_str, value_list):
-        return value_list[value_list.index(eval(choice_str))]
-
     def _seed_trial_counts(self, parameter, arms):
         self.trial_counts[parameter] = {
-            "successes": {str(arm): 0 for arm in arms},
-            "failures": {str(arm): 0 for arm in arms},
+            "successes": {arm: 0 for arm in arms},
+            "failures": {arm: 0 for arm in arms},
         }
 
     def _validate_parameter(self, parameter, value_list):
@@ -46,7 +43,7 @@ class MultiArmedBandit:
             )
 
         if parameter in self.trial_counts:
-            existing_arms = set(self._arms(parameter))
+            existing_arms = set(map(str, self._arms(parameter)))
             new_arms = set(map(str, value_list))
             if existing_arms != new_arms:
                 raise NotImplementedError(
@@ -94,16 +91,14 @@ class MultiArmedBandit:
 
     def choose(self, parameter, value_list, only_choose_winning=False):
         if only_choose_winning:
-            chosen = self.choose_winning(parameter)
-            return self._ensure_chosen_type(chosen, value_list)
+            return self.choose_winning(parameter)
 
         self._validate_parameter(parameter, value_list)
 
         if parameter not in self.trial_counts and not self.trial_counts:
             self._seed_trial_counts(parameter, value_list)
 
-        chosen = self._choose_with_epsilon_greedy(parameter)
-        return self._ensure_chosen_type(chosen, value_list)
+        return self._choose_with_epsilon_greedy(parameter)
 
     def register_outcome(self, current_selections, is_success):
         for (
@@ -111,6 +106,6 @@ class MultiArmedBandit:
             this_arm,
         ) in current_selections.items():
             if is_success:
-                self.trial_counts[this_parameter]["successes"][str(this_arm)] += 1
+                self.trial_counts[this_parameter]["successes"][this_arm] += 1
             else:
-                self.trial_counts[this_parameter]["failures"][str(this_arm)] += 1
+                self.trial_counts[this_parameter]["failures"][this_arm] += 1
