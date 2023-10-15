@@ -79,6 +79,8 @@ class TestChoose:
         with pytest.raises(ValueError):
             self.model.choose(x=1)
 
+
+class TestChooseWithNonPrimitiveTypes:
     def test_choose_classes(self):
         classes = [str, itune.MultiArmedBandit]
         chosen = self.model.choose(cls=classes)
@@ -92,6 +94,14 @@ class TestChoose:
         chosen = self.model.choose(fn=fns)
         assert chosen in fns
         assert chosen(1) == 2
+
+    def test_choose_objects(self):
+        class Foo:
+            pass
+
+        objs = [Foo(), itune.MultiArmedBandit(), itune.Tune(itune.MultiArmedBandit())]
+        chosen = self.model.choose(obj=objs)
+        assert chosen in objs
 
 
 class TestOutcome:
