@@ -1,7 +1,7 @@
 import logging as log
 import pickle
 
-FILENAME = "itune_strategy.pkl"
+DEFAULT_FILEPATH = "./.itune_strategy.pkl"
 
 
 class Tune:
@@ -14,6 +14,8 @@ class Tune:
     Args:
         strategy (object): An object that defines the reinforcement learning strategy to
                            be used.
+        filepath (str, optional): The filepath to save the strategy object to. Defaults
+                                  to `./.itune_strategy.pkl`.
         only_choose_winning_params (bool, optional): Whether to only choose the current
                                                      winning parameters. This is useful
                                                      in production to ensure determinism
@@ -21,10 +23,14 @@ class Tune:
                                                      `False`.
     """
 
-    def __init__(self, strategy, only_choose_winning_params=False):
+    def __init__(
+        self, strategy, filepath=DEFAULT_FILEPATH, only_choose_winning_params=False
+    ):
         self._current_choices = {}
         self.only_choose_winning_params = only_choose_winning_params
         self.strategy = strategy
+        self.filepath = filepath
+        self._load()
 
     def _validate_choose_argument(self, kwargs):
         if (
@@ -76,10 +82,11 @@ class Tune:
         """
         self.strategy.register_outcome(self._current_choices, is_success)
         self._reset_current_choices()
+        self._save()
 
-    def save(self):
+    def _save(self):
         if not self.only_choose_winning_params:
-            with open(FILENAME, "wb") as f:
+            with open(self.filepath, "wb") as f:
                 pickle.dump(self.strategy, f)
             log.info(f"Saved itune model with strategy {self.strategy}")
         else:
@@ -87,11 +94,23 @@ class Tune:
                 "Not saving itune model because only_choose_winning_params is True"
             )
 
-    def load(self):
+    def _load(self):
         try:
-            with open(FILENAME, "rb") as f:
-                self.strategy = pickle.load(f)
+            with open(self.filepath, "rb") as f:
+                loaded_strategy = pickle.load(f)
+                if not isinstance(loaded_strategy, self.strategy.__class__):
+                    raise TypeError(
+                        f"Loaded strategy is of type {type(loaded_strategy)} but expected type {type(self.strategy)}"
+                    )
+                self.strategy = loaded_strategy
             log.info(f"Loaded saved itune model with strategy {self.strategy}")
 
         except FileNotFoundError:
-            log.info("No saved itune model found. Continuing gracefully.")
+            if self.only_choose_winning_params:
+                raise FileNotFoundError(
+                    f"only_choose_winning_params is True but no saved itune model found at {self.filepath}"
+                )
+            else:
+                log.info(
+                    f"No saved itune model found at {self.filepath}. Continuing gracefully."
+                )

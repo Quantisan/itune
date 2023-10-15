@@ -5,9 +5,22 @@ import pytest
 import itune as itune
 
 
+def wipe_persisted_model():
+    import os
+
+    try:
+        os.remove(itune.app.DEFAULT_FILEPATH)
+    except FileNotFoundError:
+        pass
+
+
 @pytest.fixture(autouse=True)
 def with_model(request):
     request.cls.model = itune.Tune(strategy=itune.MultiArmedBandit())
+
+    yield
+
+    wipe_persisted_model()
 
 
 class TestApp:
@@ -16,7 +29,7 @@ class TestApp:
 
     def test_load_nonexistent_model(self, caplog):
         with caplog.at_level(logging.INFO):
-            assert self.model.load() is None
+            assert self.model._load() is None
         for record in caplog.records:
             assert record.levelname == "INFO"
         assert "No saved itune model found" in caplog.text
@@ -26,19 +39,14 @@ class TestApp:
     def test_save_and_load(self):
         self.model.choose(x=[1, 2])
         self.model.register_outcome(False)
+        # model is implicitly saved after register_outcome
         assert sum(self.model.strategy.trial_counts["x"]["successes"].values()) == 0
         assert sum(self.model.strategy.trial_counts["x"]["failures"].values()) == 1
-        assert self.model.save() is None
 
         fresh_model = itune.Tune(itune.MultiArmedBandit())
-        assert fresh_model.load() is None
+        # model is implicitly loaded on instantiation
         assert isinstance(fresh_model.strategy, itune.MultiArmedBandit)
         assert fresh_model.strategy.trial_counts == self.model.strategy.trial_counts
-
-        # remove the saved file
-        import os
-
-        os.remove(itune.app.FILENAME)
 
 
 class TestChoose:
@@ -72,6 +80,30 @@ class TestChoose:
             self.model.choose(x=1)
 
 
+class TestChooseWithNonPrimitiveTypes:
+    def test_choose_classes(self):
+        classes = [str, itune.MultiArmedBandit]
+        chosen = self.model.choose(cls=classes)
+        assert chosen in classes
+
+    def test_choose_functions(self):
+        def foo(x):
+            return x + 1
+
+        fns = [foo, lambda x: x + 1]
+        chosen = self.model.choose(fn=fns)
+        assert chosen in fns
+        assert chosen(1) == 2
+
+    def test_choose_objects(self):
+        class Foo:
+            pass
+
+        objs = [Foo(), itune.MultiArmedBandit(), itune.Tune(itune.MultiArmedBandit())]
+        chosen = self.model.choose(obj=objs)
+        assert chosen in objs
+
+
 class TestOutcome:
     def test_model_register_outcome(self):
         assert self.model.choose(x=[1, 2])
@@ -97,13 +129,13 @@ class TestOnlyChooseWinningParams:
             assert self.model.choose(x=arms) == chosen
         assert "only_choose_winning_params is True" in caplog.text
 
-    def test_load_still_works(self):
+    def test_load_without_saved_model_should_fail(self):
         self.model.only_choose_winning_params = True
-        assert self.model.load() is None
-        assert isinstance(self.model.strategy, itune.MultiArmedBandit)
+        with pytest.raises(FileNotFoundError):
+            self.model._load()
 
     def test_save_is_skipped(self, caplog):
         self.model.only_choose_winning_params = True
         with caplog.at_level(logging.INFO):
-            assert self.model.save() is None
+            assert self.model._save() is None
         assert "Not saving" in caplog.text
