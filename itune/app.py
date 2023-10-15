@@ -50,7 +50,13 @@ class Tune:
         """
         Choose a value for a given parameter based on the current strategy.
 
-        :param kwargs: A dictionary with a single key-value pair representing the parameter and its possible values.
+        :param kwargs: A dictionary containing a single key-value pair
+                       representing the parameter and its potential values.
+                       Values can be of any hashable data type, including
+                       booleans, integers, strings, classes, functions, etc. The
+                       only other requirement is that all values must be of the
+                       same data type.
+
         :return: The chosen value for the parameter.
         """
         self._validate_choose_argument(kwargs)
