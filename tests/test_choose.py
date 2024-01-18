@@ -11,6 +11,8 @@ def with_model(request):
 
 
 class TestMultiArmedBandit:
+    mab: MultiArmedBandit
+
     def test_instantiate_model(self):
         assert isinstance(MultiArmedBandit(), MultiArmedBandit)
 

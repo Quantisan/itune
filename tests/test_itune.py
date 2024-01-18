@@ -23,7 +23,11 @@ def with_model(request):
     wipe_persisted_model()
 
 
-class TestApp:
+class BaseTest:
+    model: itune.Tune
+
+
+class TestApp(BaseTest):
     def test_instantiate_model(self):
         assert isinstance(itune.Tune(itune.MultiArmedBandit), itune.Tune)
 
@@ -49,7 +53,7 @@ class TestApp:
         assert fresh_model.strategy.trial_counts == self.model.strategy.trial_counts
 
 
-class TestChoose:
+class TestChoose(BaseTest):
     def test_choose(self, caplog):
         with caplog.at_level(logging.INFO):
             result = self.model.choose(x=[1, 2, 3])
@@ -80,7 +84,7 @@ class TestChoose:
             self.model.choose(x=1)
 
 
-class TestChooseWithNonPrimitiveTypes:
+class TestChooseWithNonPrimitiveTypes(BaseTest):
     def test_choose_classes(self):
         classes = [str, itune.MultiArmedBandit]
         chosen = self.model.choose(cls=classes)
@@ -104,7 +108,7 @@ class TestChooseWithNonPrimitiveTypes:
         assert chosen in objs
 
 
-class TestOutcome:
+class TestOutcome(BaseTest):
     def test_model_register_outcome(self):
         assert self.model.choose(x=[1, 2])
         assert self.model.register_outcome(False) is None
@@ -115,7 +119,7 @@ class TestOutcome:
         assert self.model._current_choices == {}
 
 
-class TestOnlyChooseWinningParams:
+class TestOnlyChooseWinningParams(BaseTest):
     def test_choose_winner(self, caplog):
         arms = list(range(1, 100))
         chosen = self.model.choose(x=arms)
